@@ -79,3 +79,7 @@ crashlytics-build.properties
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# VS Code / Visual Studio (generate local)
+.vscode/
+*.slnx

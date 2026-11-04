@@ -369,6 +369,69 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 6146325600475998905, guid: f87a86bd7a78e8d408e1b9293dcbd272, type: 3}
+--- !u!1 &905568185
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 905568187}
+  - component: {fileID: 905568186}
+  m_Layer: 0
+  m_Name: Tremor Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &905568186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905568185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6e1e39d80aca6d4b86bfcbb5876cbed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Unsteady.Tremor.TremorManager
+  level: 0
+  profile: 0
+  hapticsEnabled: 1
+  parkinsonFrequency: 5
+  essentialFrequency: 8
+  frequencyJitter: 0.12
+  usor:
+    amplitudeMeters: 0.004
+    rotationDegrees: 1.5
+    hapticStrength: 0.15
+  moderat:
+    amplitudeMeters: 0.01
+    rotationDegrees: 4
+    hapticStrength: 0.35
+  sever:
+    amplitudeMeters: 0.022
+    rotationDegrees: 8
+    hapticStrength: 0.6
+  keyboardShortcuts: 1
+--- !u!4 &905568187
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905568185}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1049496542
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -828,8 +891,58 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7917674758919744183, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1373153110}
+    - targetCorrespondingSourceObject: {fileID: 7917674758240283208, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1373153109}
   m_SourcePrefab: {fileID: 100100000, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+--- !u!1 &1373153107 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7917674758240283208, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+  m_PrefabInstance: {fileID: 1373153106}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1373153108 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7917674758919744183, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+  m_PrefabInstance: {fileID: 1373153106}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1373153109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373153107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a7819ea0104692429de38f22a4c989c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Unsteady.Tremor.TremorHand
+  side: 1
+  sideMultiplier: 1
+  exclude:
+  - Teleport
+  hapticInterval: 0.05
+--- !u!114 &1373153110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373153108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a7819ea0104692429de38f22a4c989c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Unsteady.Tremor.TremorHand
+  side: 0
+  sideMultiplier: 1
+  exclude:
+  - Teleport
+  hapticInterval: 0.05
 --- !u!1 &1381370878 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8503767461461625734, guid: f87a86bd7a78e8d408e1b9293dcbd272, type: 3}
@@ -1510,3 +1623,4 @@ SceneRoots:
   - {fileID: 1160248838}
   - {fileID: 1933044052}
   - {fileID: 1582718904}
+  - {fileID: 905568187}
