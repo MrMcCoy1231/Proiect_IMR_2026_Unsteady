@@ -1423,6 +1423,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bucatarie_Graybox
       objectReference: {fileID: 0}
+    - target: {fileID: 8742332921787385285, guid: 41e0bbd02b9eb3e4598a71e4255ced1b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a617de954105e5e4584e35d4f07f5b4b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
