@@ -212,15 +212,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2130331531475655813, guid: d661f645c81f29b4aa596207971ae441, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.5913931e-18
+      value: 5.632077e-18
       objectReference: {fileID: 0}
     - target: {fileID: 2130331531475655813, guid: d661f645c81f29b4aa596207971ae441, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.012994713
+      value: 0.02598941
       objectReference: {fileID: 0}
     - target: {fileID: 2130331531475655813, guid: d661f645c81f29b4aa596207971ae441, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.6801697e-10
+      value: -0.000000002010261
+      objectReference: {fileID: 0}
+    - target: {fileID: 6524287566887027744, guid: d661f645c81f29b4aa596207971ae441, type: 3}
+      propertyPath: m_Renderer
+      value: 
+      objectReference: {fileID: 1959121320}
+    - target: {fileID: 7976323727854615770, guid: d661f645c81f29b4aa596207971ae441, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7976323729782014875, guid: d661f645c81f29b4aa596207971ae441, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8348423061939033190, guid: d661f645c81f29b4aa596207971ae441, type: 3}
       propertyPath: m_PokeFilter
@@ -2030,6 +2042,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09fdf36d98731bd4aa2f189488a05053, type: 3}
+--- !u!23 &1959121320 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8542569998572914694, guid: d661f645c81f29b4aa596207971ae441, type: 3}
+  m_PrefabInstance: {fileID: 115681917}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2104504056 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3869389766060156131, guid: dc1c36cd3facdcd4db0a94db2f884724, type: 3}
