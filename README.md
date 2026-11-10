@@ -30,7 +30,8 @@ Unsteady este o experiență pentru **Meta Quest 2** cu două moduri:
 | Panou de control în lume (nivel, profil, vibrație) | ✅ |
 | Meniu de start: Empatie / Testează-ți mâna | ✅ (al doilea mod arată deocamdată „în curând”) |
 | Pahar apucabil + turnatul apei | 🔧 în lucru |
-| Taste apăsabile cu degetul pe tastatură (4 taste poke) | ✅ |
+| Tastatură funcțională: 61 de taste reale (QWERTY), apăsate cu degetul / controllerul | ✅ |
+| Sarcina de scris: cuvânt pe ecran, timp + greșeli + nivelul de tremor | ✅ |
 | Materiale simple: pereți alb cald, mobilă stejar | ✅ |
 | Scrisul pe tablă, ecranul de rezultate, scenariul de detecție, texturi | ⏳ planificat |
 
@@ -53,6 +54,8 @@ Unsteady este o experiență pentru **Meta Quest 2** cu două moduri:
 | F6 | Pornește / oprește vibrația |
 | **Y** (controller stâng, și în cască) | Nivelul următor: Oprit → Ușor → Moderat → Sever |
 
+Ca să testezi tastatura fără cască: în Play, selectează **Tastatura** și bifează **Test With Pc Keyboard**. Literele tastate pe PC apasă tastele virtuale, iar Enter trece la cuvântul următor.
+
 Intensitățile se reglează live, în Play, din Inspector, pe obiectul **Tremor Manager**: amplitudinea în metri, rotația în grade, frecvența și puterea vibrației.
 
 ## Structura proiectului
@@ -65,8 +68,9 @@ Assets/
   Scripts/Tremor/        TremorManager (stare: nivel, profil, vibrație)
                          TremorHand (tremorul și vibrația pe fiecare controller)
   Scripts/UI/            TremorPanel (panoul de control), StartMenu (meniul de start)
+  Scripts/Tastatura/     TastaturaFunctionala (apăsarea tastelor + sarcina de scris), Tasta
   Prefabs/UI/            PanouTremor, MeniuStart
-  Prefabs/Tastatura/     tastatura cu 4 taste poke
+  Prefabs/Tastatura/     tastatura cu taste reale + ecran (Tastatura_Taste.asset = mesh-urile tastelor)
   Prefabs/Bucatarie/     bucătăria cu materialele aplicate
   Materiale/             Perete_AlbCald, Mobila_Stejar
 docs/                    propunerea și structura proiectului (PDF)
@@ -86,6 +90,7 @@ Uneltele de editor care construiesc automat componentele în scena deschisă:
 2. **Creează panoul de control (UI):** construiește PanouTremor deasupra mesei.
 3. **Creează meniul de start (UI):** construiește MeniuStart în fața jucătorului și îl leagă de panou.
 4. **Integrează tastatura + materialele în SampleScene:** pune tastatura lui Anca și materialele pe bucătărie.
+5. **Fă tastatura funcțională (taste reale):** desparte modelul `Tastatura.fbx` în 61 de taste, le pune literele QWERTY și ecranul cu sarcina de scris.
 
 ## Cum lucrăm pe Git
 
