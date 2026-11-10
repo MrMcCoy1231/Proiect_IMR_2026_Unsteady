@@ -30,7 +30,8 @@ Unsteady este o experiență pentru **Meta Quest 2** cu două moduri:
 | Panou de control în lume (nivel, profil, vibrație) | ✅ |
 | Meniu de start: Empatie / Testează-ți mâna | ✅ (al doilea mod arată deocamdată „în curând”) |
 | Pahar apucabil + turnatul apei | 🔧 în lucru |
-| Taste apăsabile pe tastatură | 🔧 în lucru |
+| Taste apăsabile cu degetul pe tastatură (4 taste poke) | ✅ |
+| Materiale simple: pereți alb cald, mobilă stejar | ✅ |
 | Scrisul pe tablă, ecranul de rezultate, scenariul de detecție, texturi | ⏳ planificat |
 
 ## Cum rulezi proiectul
@@ -50,6 +51,7 @@ Unsteady este o experiență pentru **Meta Quest 2** cu două moduri:
 | F1 / F2 / F3 / F4 | Tremor Oprit / Ușor / Moderat / Sever |
 | F5 | Schimbă profilul (Parkinson ↔ esențial) |
 | F6 | Pornește / oprește vibrația |
+| **Y** (controller stâng, și în cască) | Nivelul următor: Oprit → Ușor → Moderat → Sever |
 
 Intensitățile se reglează live, în Play, din Inspector, pe obiectul **Tremor Manager**: amplitudinea în metri, rotația în grade, frecvența și puterea vibrației.
 
@@ -64,6 +66,9 @@ Assets/
                          TremorHand (tremorul și vibrația pe fiecare controller)
   Scripts/UI/            TremorPanel (panoul de control), StartMenu (meniul de start)
   Prefabs/UI/            PanouTremor, MeniuStart
+  Prefabs/Tastatura/     tastatura cu 4 taste poke
+  Prefabs/Bucatarie/     bucătăria cu materialele aplicate
+  Materiale/             Perete_AlbCald, Mobila_Stejar
 docs/                    propunerea și structura proiectului (PDF)
 ```
 
@@ -80,6 +85,7 @@ Uneltele de editor care construiesc automat componentele în scena deschisă:
 1. **Adaugă tremorul în scena deschisă:** creează Tremor Manager și pune TremorHand pe controllere.
 2. **Creează panoul de control (UI):** construiește PanouTremor deasupra mesei.
 3. **Creează meniul de start (UI):** construiește MeniuStart în fața jucătorului și îl leagă de panou.
+4. **Integrează tastatura + materialele în SampleScene:** pune tastatura lui Anca și materialele pe bucătărie.
 
 ## Cum lucrăm pe Git
 
@@ -88,6 +94,7 @@ Fiecare lucrează pe branch-ul lui (`feature/...`) și trimite munca printr-un *
 - Închide Unity înainte de **Pull**.
 - Comite mereu fișierele `.meta` împreună cu fișierele lor.
 - Nu edita `SampleScene`. Lucrează în scena ta din `Scenes/Dev/` și predă munca ca prefab.
+- **Nu comite niciodată `LiberationSans SDF - Fallback.asset`.** Unity îl modifică singur la fiecare Play (adaugă literele cu diacritice). Dă-i **Discard changes** în GitHub Desktop.
 
 Planul detaliat al săptămânii, cu tutorialul GitHub, e în documentul de plan al echipei.
 

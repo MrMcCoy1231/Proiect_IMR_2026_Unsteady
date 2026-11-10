@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.XR;
 #endif
 
 namespace Unsteady.Tremor
@@ -54,6 +56,9 @@ namespace Unsteady.Tremor
 
         [Header("Taste de test în Editor (F1-F4 nivel, F5 profil, F6 vibrație)")]
         public bool keyboardShortcuts = true;
+
+        [Header("Controller: butonul Y (stânga) schimbă nivelul")]
+        public bool controllerShortcut = true;
 
         /// <summary>Se apelează de fiecare dată când se schimbă nivelul, profilul sau vibrația.</summary>
         public event Action Changed;
@@ -148,6 +153,14 @@ namespace Unsteady.Tremor
 #if ENABLE_INPUT_SYSTEM
         void Update()
         {
+            // Butonul Y de pe controllerul stâng: Oprit → Ușor → Moderat → Sever → Oprit.
+            if (controllerShortcut)
+            {
+                var left = XRController.leftHand;
+                var y = left != null ? left.TryGetChildControl<ButtonControl>("secondaryButton") : null;
+                if (y != null && y.wasPressedThisFrame) NextLevel();
+            }
+
             if (!keyboardShortcuts || Keyboard.current == null) return;
             var k = Keyboard.current;
             if (k.f1Key.wasPressedThisFrame) SetLevel(TremorLevel.Oprit);
