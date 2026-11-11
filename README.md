@@ -29,7 +29,7 @@ Unsteady este o experiență pentru **Meta Quest 2** cu două moduri:
 | Vibrația controllerului, sincronizată cu tremorul | ✅ |
 | Panou de control în lume (nivel, profil, vibrație) | ✅ |
 | Meniu de start: Empatie / Testează-ți mâna | ✅ (al doilea mod arată deocamdată „în curând”) |
-| Pahar apucabil + turnatul apei | 🔧 în lucru |
+| Pahar apucabil + turnatul apei (peste ~60°), pahar țintă care se umple | ✅ |
 | Tastatură funcțională: 61 de taste reale (QWERTY), apăsate cu degetul / controllerul | ✅ |
 | Sarcina de scris: cuvânt pe ecran, timp + greșeli + nivelul de tremor | ✅ |
 | Materiale simple: pereți alb cald, mobilă stejar | ✅ |
@@ -72,7 +72,10 @@ Assets/
   Prefabs/UI/            PanouTremor, MeniuStart
   Prefabs/Tastatura/     tastatura cu taste reale + ecran (Tastatura_Taste.asset = mesh-urile tastelor)
   Prefabs/Bucatarie/     bucătăria cu materialele aplicate
-  Materiale/             Perete_AlbCald, Mobila_Stejar
+  Materiale/             Perete_AlbCald, Mobila_Stejar, Tasta
+  Prefabs/Pahar/         paharul din care torni
+  Prefabs/Pahar_tinta/   paharul care se umple
+  Scripts/Pahar/         TurnareApa, PaharTinta
 docs/                    propunerea și structura proiectului (PDF)
 ```
 
@@ -91,6 +94,7 @@ Uneltele de editor care construiesc automat componentele în scena deschisă:
 3. **Creează meniul de start (UI):** construiește MeniuStart în fața jucătorului și îl leagă de panou.
 4. **Integrează tastatura + materialele în SampleScene:** pune tastatura lui Anca și materialele pe bucătărie.
 5. **Fă tastatura funcțională (taste reale):** desparte modelul `Tastatura.fbx` în 61 de taste, le pune literele QWERTY și ecranul cu sarcina de scris.
+6. **Integrează paharele (Ștefan) în SampleScene:** pune `Pahar` și `Pahar_Tinta` pe masă.
 
 ## Cum lucrăm pe Git
 

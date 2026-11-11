@@ -75,6 +75,60 @@ namespace Unsteady.Tremor.EditorTools
             Debug.Log($"[Integrare] Gata: {painted} obiecte colorate, {keyboardMsg}. SampleScene salvată.");
         }
 
+        const string PaharPrefabPath = "Assets/Prefabs/Pahar/Pahar.prefab";
+        const string PaharTintaPrefabPath = "Assets/Prefabs/Pahar_tinta/Pahar_Tinta.prefab";
+
+        [MenuItem("Unsteady/6. Integrează paharele (Ștefan) în SampleScene")]
+        static void IntegrateCups()
+        {
+            var cup = AssetDatabase.LoadAssetAtPath<GameObject>(PaharPrefabPath);
+            var target = AssetDatabase.LoadAssetAtPath<GameObject>(PaharTintaPrefabPath);
+            if (cup == null || target == null)
+            {
+                EditorUtility.DisplayDialog("Unsteady", "Lipsesc prefaburile Pahar / Pahar_Tinta. Ai făcut Pull pe main?", "OK");
+                return;
+            }
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+
+            // Paharul gol din graybox: îl înlocuim cu prefabul lui Ștefan, în același loc.
+            var old = GameObject.Find("Pahar");
+            bool already = old != null && PrefabUtility.GetCorrespondingObjectFromSource(old) == cup;
+            Vector3 pos = old != null ? old.transform.position : new Vector3(0.277f, 0.8f, 0.092f);
+            Transform parent = old != null ? old.transform.parent : null;
+
+            GameObject cupGo = old;
+            if (!already)
+            {
+                cupGo = (GameObject)PrefabUtility.InstantiatePrefab(cup, scene);
+                Undo.RegisterCreatedObjectUndo(cupGo, "Pahar Stefan");
+                if (parent != null) cupGo.transform.SetParent(parent, true);
+                cupGo.transform.position = pos;              // rotația și scara rămân cele din prefab
+                if (old != null)
+                {
+                    cupGo.transform.SetSiblingIndex(old.transform.GetSiblingIndex());
+                    Undo.DestroyObjectImmediate(old);
+                }
+                cupGo.name = "Pahar";
+            }
+
+            // Paharul țintă: lângă pahar, ca în Dev_Stefan (16 cm la dreapta).
+            if (GameObject.Find("Pahar_Tinta") == null)
+            {
+                var t = (GameObject)PrefabUtility.InstantiatePrefab(target, scene);
+                Undo.RegisterCreatedObjectUndo(t, "Pahar_Tinta Stefan");
+                if (cupGo.transform.parent != null) t.transform.SetParent(cupGo.transform.parent, true);
+                t.transform.position = cupGo.transform.position + Vector3.right * 0.162f;
+                t.transform.SetSiblingIndex(cupGo.transform.GetSiblingIndex() + 1);
+                t.name = "Pahar_Tinta";
+            }
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Selection.activeObject = cupGo;
+            Debug.Log("[Integrare] Paharele lui Ștefan sunt în SampleScene. SampleScene salvată.");
+        }
+
         // Pereți și podea: alb cald. Mobila (masă, scaun, dulapuri, blat): stejar.
         static bool Paint(Renderer r, Material wall, Material wood)
         {
