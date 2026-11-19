@@ -129,6 +129,42 @@ namespace Unsteady.Tremor.EditorTools
             Debug.Log("[Integrare] Paharele lui Ștefan sunt în SampleScene. SampleScene salvată.");
         }
 
+        [MenuItem("Unsteady/Utilitare/Scoate grab-ul de pe tastatură (SampleScene)")]
+        static void RemoveKeyboardGrab()
+        {
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            var kb = GameObject.Find("Tastatura");
+            if (kb == null) { Debug.LogWarning("[Integrare] Nu am găsit Tastatura."); return; }
+
+            int scoase = 0;
+            // Doar componentele adăugate pe instanța din scenă (nu cele din prefab, nici collider-ele tastelor).
+            foreach (var c in kb.GetComponents<Component>())
+            {
+                if (c == null || c is Transform) continue;
+                bool tinta = c is UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable
+                          || c is Rigidbody
+                          || c is Collider;
+                if (!tinta) continue;
+                if (PrefabUtility.IsPartOfPrefabInstance(c) && !PrefabUtility.IsAddedComponentOverride(c)) continue;
+                Undo.DestroyObjectImmediate(c);
+                scoase++;
+            }
+            // Ordinea contează (grab-ul depinde de Rigidbody): mai trecem o dată pentru ce a rămas.
+            foreach (var c in kb.GetComponents<Component>())
+            {
+                if (c is Rigidbody || c is Collider)
+                {
+                    if (PrefabUtility.IsPartOfPrefabInstance(c) && !PrefabUtility.IsAddedComponentOverride(c)) continue;
+                    Undo.DestroyObjectImmediate(c); scoase++;
+                }
+            }
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log($"[Integrare] Am scos {scoase} componente de grab de pe Tastatura. SampleScene salvată.");
+        }
+
         // Pereți și podea: alb cald. Mobila (masă, scaun, dulapuri, blat): stejar.
         static bool Paint(Renderer r, Material wall, Material wood)
         {

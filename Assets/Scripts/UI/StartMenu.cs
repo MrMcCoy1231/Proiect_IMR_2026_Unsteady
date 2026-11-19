@@ -52,6 +52,14 @@ namespace Unsteady.UI
 
         public void StartEmpathy()
         {
+            // Dacă scena are fluxul complet (tutorial → stații → rezultate), el preia de aici.
+            if (Unsteady.Flux.EmpatieFlow.Instance != null)
+            {
+                gameObject.SetActive(false);
+                Unsteady.Flux.EmpatieFlow.Instance.Incepe();
+                return;
+            }
+
             SetActive(showOnEmpathy, true);
             if (TremorManager.Instance != null) TremorManager.Instance.SetLevel(empathyStartLevel);
             gameObject.SetActive(false);

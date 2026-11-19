@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 using Unsteady.Tremor;
+using Unsteady.Flux;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -17,7 +19,7 @@ namespace Unsteady.Tastatura
     /// (XRPokeInteractor) și apasă tasta de sub el. Sarcina: scrii cuvântul de pe
     /// ecran. Măsoară timpul și greșelile, ca să compari fără tremor vs cu tremor.
     /// </summary>
-    public class TastaturaFunctionala : MonoBehaviour
+    public class TastaturaFunctionala : MonoBehaviour, IStatie
     {
         [Header("Construită automat (Unsteady → 5)")]
         public Transform keySpace;
@@ -82,6 +84,70 @@ namespace Unsteady.Tastatura
                 if (k != null) k.rend = k.GetComponent<Renderer>();
             if (keySpace == null) keySpace = transform;
             ResetWord();
+
+            // În scena cu fluxul Empatie, tastatura e o stație: ecranul apare doar când îi vine rândul.
+            if (targetText != null)
+            {
+                var c = targetText.GetComponentInParent<Canvas>(true);
+                if (c != null) ecran = c.gameObject;
+            }
+            controlatDeFlux = FindFirstObjectByType<EmpatieFlow>() != null;
+            if (controlatDeFlux)
+            {
+                activ = false;
+                if (ecran != null) ecran.SetActive(false);
+            }
+        }
+
+        // ---------------- IStatie (modul Empatie) ----------------
+
+        bool controlatDeFlux;
+        bool activ = true;
+        GameObject ecran;
+        int ultimaIncercare = -1;
+
+        public event Action<RezultatStatie> Gata;
+        public string Nume => "Tastează";
+        public string Instructiuni =>
+            "Scrie pe tastatură cuvântul de pe ecran.\nApasă tastele cu vârful controllerului sau ochește-le și apasă trigger-ul.";
+
+        public void Pregateste(int incercare)
+        {
+            CancelInvoke(nameof(TrimiteGata));
+            // Cuvânt nou la încercarea fără tremor; același cuvânt la cea cu tremor, ca să se compare corect.
+            if (incercare == 0 && ultimaIncercare != -1 && words.Length > 0) wordIndex = (wordIndex + 1) % words.Length;
+            ultimaIncercare = incercare;
+            activ = false;
+            ResetWord();
+            if (ecran != null) ecran.SetActive(true);
+            if (statsText != null) statsText.text = "Apasă <b>Start</b> pe panou";
+        }
+
+        public void Porneste()
+        {
+            activ = true;
+            running = true;
+            startTime = Time.time;
+        }
+
+        public void Opreste()
+        {
+            CancelInvoke(nameof(TrimiteGata));
+            activ = false;
+            if (ecran != null) ecran.SetActive(false);
+        }
+
+        void TrimiteGata()
+        {
+            string w = Word;
+            Gata?.Invoke(new RezultatStatie
+            {
+                timpSecunde = endTime - startTime,
+                greseli = errors,
+                etichetaGreseli = errors == 1 ? "greșeală" : "greșeli",
+                scor = Mathf.Clamp01(1f - errors / (float)Mathf.Max(1, w.Length * 2)),
+                detalii = w
+            });
         }
 
 #if ENABLE_INPUT_SYSTEM
@@ -97,7 +163,8 @@ namespace Unsteady.Tastatura
 
         void OnPcText(char c)
         {
-            if (!testWithPcKeyboard) return;
+            // În Editor, cât timp stația din fluxul Empatie e activă, poți scrie și de la tastatura PC-ului.
+            if (!testWithPcKeyboard && !(Application.isEditor && controlatDeFlux && activ)) return;
             c = char.ToUpperInvariant(c);
             for (int i = 0; i < keys.Length; i++)
                 if (keys[i] != null && keys[i].kind == KeyKind.Caracter && keys[i].character == c)
@@ -276,7 +343,7 @@ namespace Unsteady.Tastatura
                     break;
                 case KeyKind.Enter:
                     Flash(k, pressedColor);
-                    if (done) NextWord();
+                    if (done && !controlatDeFlux) NextWord();
                     break;
                 default:
                     Flash(k, pressedColor);
@@ -287,14 +354,18 @@ namespace Unsteady.Tastatura
         void HandleChar(Tasta k)
         {
             string w = Word;
-            if (done || w.Length == 0) { Flash(k, pressedColor); return; }
+            if (!activ || done || w.Length == 0) { Flash(k, pressedColor); return; }
             if (!running) { running = true; startTime = Time.time; }
 
             if (char.ToUpperInvariant(k.character) == w[progress])
             {
                 progress++;
                 Flash(k, correctColor);
-                if (progress >= w.Length) { done = true; running = false; endTime = Time.time; }
+                if (progress >= w.Length)
+                {
+                    done = true; running = false; endTime = Time.time;
+                    if (controlatDeFlux) Invoke(nameof(TrimiteGata), 0.6f);
+                }
             }
             else
             {
@@ -346,7 +417,7 @@ namespace Unsteady.Tastatura
             {
                 var lvl = TremorManager.Instance != null ? TremorManager.Instance.Level : TremorLevel.Oprit;
                 statsText.text = $"<color=#5CD65C>Gata!</color>  Timp {endTime - startTime:0.0} s · Greșeli {errors} · Tremor: {TremorManager.LevelName(lvl)}\n" +
-                                 "<size=80%>Apasă Enter pentru alt cuvânt</size>";
+                                 (controlatDeFlux ? "" : "<size=80%>Apasă Enter pentru alt cuvânt</size>");
             }
             else if (!running)
                 statsText.text = "Apasă tastele cu degetul";

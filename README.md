@@ -33,7 +33,12 @@ Unsteady este o experiență pentru **Meta Quest 2** cu două moduri:
 | Tastatură funcțională: 61 de taste reale (QWERTY), apăsate cu degetul / controllerul | ✅ |
 | Sarcina de scris: cuvânt pe ecran, timp + greșeli + nivelul de tremor | ✅ |
 | Materiale simple: pereți alb cald, mobilă stejar | ✅ |
-| Scrisul pe tablă, ecranul de rezultate, scenariul de detecție, texturi | ⏳ planificat |
+| Modul Empatie complet: tutorial → alegi tremorul → stații (fără / cu tremor) → carduri „Știai că?” → rezultate | ✅ |
+| Scrisul pe tablă cu markerul (stația 3), cu linii de ghidaj și măsurarea ieșirilor din rând | ✅ |
+| Înălțimea capului: modul Floor pe cască, 1,20 m în simulator | ✅ |
+| Paharele legate de fluxul Empatie (stația 1) | 🔧 în lucru (Ștefan) |
+| Texturi și obiecte de decor | 🔧 în lucru (Anca) |
+| Testează-ți mâna (scenariul de detecție) | ⏳ după prezentare |
 
 ## Cum rulezi proiectul
 
@@ -52,7 +57,10 @@ Unsteady este o experiență pentru **Meta Quest 2** cu două moduri:
 | F1 / F2 / F3 / F4 | Tremor Oprit / Ușor / Moderat / Sever |
 | F5 | Schimbă profilul (Parkinson ↔ esențial) |
 | F6 | Pornește / oprește vibrația |
-| **Y** (controller stâng, și în cască) | Nivelul următor: Oprit → Ușor → Moderat → Sever |
+| **Y** (controller stâng, și în cască) | Nivelul următor: Oprit → Ușor → Moderat → Sever (oprit în timpul modului Empatie) |
+| **F8** | Modul Empatie: pornește / apasă butonul principal al panoului (Start, Continuă, Sari peste...) |
+| **F7** | Pe tablă: scrie automat o linie de test și apasă Gata |
+| **T** (simulator) | Trigger-ul controllerului: apeși butoanele cu raza |
 
 Ca să testezi tastatura fără cască: în Play, selectează **Tastatura** și bifează **Test With Pc Keyboard**. Literele tastate pe PC apasă tastele virtuale, iar Enter trece la cuvântul următor.
 
@@ -69,7 +77,9 @@ Assets/
                          TremorHand (tremorul și vibrația pe fiecare controller)
   Scripts/UI/            TremorPanel (panoul de control), StartMenu (meniul de start)
   Scripts/Tastatura/     TastaturaFunctionala (apăsarea tastelor + sarcina de scris), Tasta
-  Prefabs/UI/            PanouTremor, MeniuStart
+  Scripts/Flux/          IStatie (contractul stațiilor), EmpatieFlow (modul Empatie), ScreenFade, InaltimeJucator
+  Scripts/Tabla/         TablaScris (scrisul cu markerul pe tablă)
+  Prefabs/UI/            PanouTremor, MeniuStart, PanouFlux
   Prefabs/Tastatura/     tastatura cu taste reale + ecran (Tastatura_Taste.asset = mesh-urile tastelor)
   Prefabs/Bucatarie/     bucătăria cu materialele aplicate
   Materiale/             Perete_AlbCald, Mobila_Stejar, Tasta
@@ -95,6 +105,8 @@ Uneltele de editor care construiesc automat componentele în scena deschisă:
 4. **Integrează tastatura + materialele în SampleScene:** pune tastatura lui Anca și materialele pe bucătărie.
 5. **Fă tastatura funcțională (taste reale):** desparte modelul `Tastatura.fbx` în 61 de taste, le pune literele QWERTY și ecranul cu sarcina de scris.
 6. **Integrează paharele (Ștefan) în SampleScene:** pune `Pahar` și `Pahar_Tinta` pe masă.
+7. **Creează fluxul Empatie:** panourile (tutorial, instrucțiuni, card, rezultate), logica `EmpatieFlow` și înălțimea capului.
+8. **Fă tabla funcțională:** markerul apucabil cu punct pe vârf + `TablaScris` pe tablă.
 
 ## Cum lucrăm pe Git
 
