@@ -46,16 +46,18 @@ namespace Unsteady.Tabla.EditorTools
             var grab = marker.GetComponent<XRGrabInteractable>();
             if (grab == null) grab = Undo.AddComponent<XRGrabInteractable>(marker);
             Undo.RecordObject(grab, "Grab marker");
-            grab.movementType = XRBaseInteractable.MovementType.Instantaneous;
+            // Velocity Tracking: markerul urmărește mâna prin fizică, deci se oprește în tablă în loc să treacă prin ea.
+            grab.movementType = XRBaseInteractable.MovementType.VelocityTracking;
             grab.smoothPosition = false;
             grab.smoothRotation = false;
-            grab.useDynamicAttach = true;      // rămâne în mână cum l-ai apucat
+            grab.useDynamicAttach = false;     // se așază mereu la fel în mână, ca un pix
             grab.throwOnDetach = false;
             PrefabUtility.RecordPrefabInstancePropertyModifications(rb);
             PrefabUtility.RecordPrefabInstancePropertyModifications(grab);
 
             // Vârful markerului: capătul mai subțire al axei lungi a modelului.
             var varf = CreeazaVarf(marker);
+            CreeazaPrindere(marker, varf, grab);
 
             var scris = tabla.GetComponent<TablaScris>();
             if (scris == null) scris = Undo.AddComponent<TablaScris>(tabla);
@@ -103,7 +105,49 @@ namespace Unsteady.Tabla.EditorTools
             Undo.RegisterCreatedObjectUndo(go, "Varf");
             go.transform.SetParent(parent, false);
             go.transform.localPosition = local;
+
+            // Vârful colorat (albastru închis), ca să se vadă cu ce capăt scrii.
+            var bila = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            bila.name = "Varf_Vizual";
+            Object.DestroyImmediate(bila.GetComponent<Collider>());
+            bila.transform.SetParent(go.transform, false);
+            Vector3 ls = go.transform.lossyScale;
+            float diam = 0.016f;                                // ~1.6 cm diametru, indiferent de scara markerului
+            bila.transform.localScale = new Vector3(diam / Mathf.Max(ls.x, 1e-5f), diam / Mathf.Max(ls.y, 1e-5f), diam / Mathf.Max(ls.z, 1e-5f));
+            var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            mat.SetColor("_BaseColor", new Color(0.12f, 0.20f, 0.55f));
+            const string matPath = "Assets/Materiale/Marker_Varf.mat";
+            var existentMat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+            if (existentMat == null) { AssetDatabase.CreateAsset(mat, matPath); existentMat = mat; }
+            bila.GetComponent<Renderer>().sharedMaterial = existentMat;
             return go.transform;
+        }
+
+        // Punctul de prindere: în treimea din spate a markerului, cu "înainte" spre vârf.
+        // XRI aliniază acest punct cu mâna, deci markerul stă mereu ca un pix, cu vârful în direcția controllerului.
+        static void CreeazaPrindere(GameObject marker, Transform varf, XRGrabInteractable grab)
+        {
+            var mf = marker.GetComponentInChildren<MeshFilter>();
+            var parent = mf != null ? mf.transform : marker.transform;
+            var existent = parent.Find("Prindere");
+            if (existent != null) Undo.DestroyObjectImmediate(existent.gameObject);
+
+            Vector3 centru = mf != null && mf.sharedMesh != null ? mf.sharedMesh.bounds.center : Vector3.zero;
+            Vector3 tip = varf.localPosition;
+            Vector3 spate = centru - (tip - centru);                // capătul opus vârfului
+            Vector3 local = Vector3.Lerp(spate, tip, 0.3f);
+
+            var go = new GameObject("Prindere");
+            Undo.RegisterCreatedObjectUndo(go, "Prindere");
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = local;
+            Vector3 axa = (tip - spate).normalized;
+            Vector3 up = Mathf.Abs(Vector3.Dot(axa, Vector3.up)) > 0.9f ? Vector3.forward : Vector3.up;
+            go.transform.localRotation = Quaternion.LookRotation(axa, up);
+
+            Undo.RecordObject(grab, "Attach marker");
+            grab.attachTransform = go.transform;
+            PrefabUtility.RecordPrefabInstancePropertyModifications(grab);
         }
     }
 }

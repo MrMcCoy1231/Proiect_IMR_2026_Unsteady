@@ -129,6 +129,61 @@ namespace Unsteady.Tremor.EditorTools
             Debug.Log("[Integrare] Paharele lui Ștefan sunt în SampleScene. SampleScene salvată.");
         }
 
+        const string DecorPrefabPath = "Assets/Prefabs/Bucatarie/Bucatarie_Decor.prefab";
+
+        [MenuItem("Unsteady/9. Integrează bucătăria cu decor (Anca) + lumina în SampleScene")]
+        static void IntegrateDecor()
+        {
+            var decor = AssetDatabase.LoadAssetAtPath<GameObject>(DecorPrefabPath);
+            if (decor == null) { EditorUtility.DisplayDialog("Unsteady", "Lipsește Bucatarie_Decor.prefab. Ai făcut Pull pe main?", "OK"); return; }
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+
+            // 1) Bucătăria veche (graybox) → prefabul Anca, aliniat exact peste ea.
+            GameObject decorGo = null;
+            foreach (var root in scene.GetRootGameObjects())
+                if (PrefabUtility.GetCorrespondingObjectFromSource(root) == decor) decorGo = root;
+
+            if (decorGo == null)
+            {
+                var old = GameObject.Find("Bucatarie_Graybox");
+                decorGo = (GameObject)PrefabUtility.InstantiatePrefab(decor, scene);
+                Undo.RegisterCreatedObjectUndo(decorGo, "Bucatarie_Decor");
+                decorGo.transform.position = Vector3.zero;
+                if (old != null && old.transform.parent == null)
+                {
+                    // Graybox-ul din prefab trebuie să ajungă exact unde era cel vechi (masa, tabla, paharele stau pe el).
+                    Transform inner = null;
+                    foreach (Transform c in decorGo.transform) if (c.name == "Bucatarie_Graybox") inner = c;
+                    if (inner != null) decorGo.transform.position += old.transform.position - inner.position;
+                    decorGo.transform.SetSiblingIndex(old.transform.GetSiblingIndex());
+                    Undo.DestroyObjectImmediate(old);
+                }
+                decorGo.name = "Bucatarie_Decor";
+            }
+
+            // 2) Lumina, după instrucțiunile din PR-ul Anca.
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = new Color32(168, 149, 128, 255);
+            RenderSettings.reflectionIntensity = 0.3f;
+            foreach (var l in Object.FindObjectsByType<Light>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (l.type == LightType.Directional)
+                {
+                    Undo.RecordObject(l, "Directional Light");
+                    l.color = new Color32(255, 228, 194, 255);
+                    l.intensity = 0.4f;
+                    PrefabUtility.RecordPrefabInstancePropertyModifications(l);
+                }
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+
+            // 3) Generate Lighting (luminile Anca sunt Baked: fără asta nu luminează nimic).
+            if (!Lightmapping.BakeAsync())
+                Debug.LogWarning("[Integrare] Nu am putut porni Generate Lighting. Pornește-l din Window → Rendering → Lighting.");
+            Debug.Log("[Integrare] Bucataria Anca e în SampleScene, lumina e setată, Generate Lighting a pornit (bara din dreapta-jos).");
+        }
+
         [MenuItem("Unsteady/Utilitare/Scoate grab-ul de pe tastatură (SampleScene)")]
         static void RemoveKeyboardGrab()
         {

@@ -37,7 +37,7 @@ Unsteady este o experiență pentru **Meta Quest 2** cu două moduri:
 | Scrisul pe tablă cu markerul (stația 3), cu linii de ghidaj și măsurarea ieșirilor din rând | ✅ |
 | Înălțimea capului: modul Floor pe cască, 1,20 m în simulator | ✅ |
 | Paharele legate de fluxul Empatie (stația 1) | 🔧 în lucru (Ștefan) |
-| Texturi și obiecte de decor | 🔧 în lucru (Anca) |
+| Bucătăria cu texturi, decor și lumini calde (baked) | ✅ |
 | Testează-ți mâna (scenariul de detecție) | ⏳ după prezentare |
 
 ## Cum rulezi proiectul
@@ -106,7 +106,8 @@ Uneltele de editor care construiesc automat componentele în scena deschisă:
 5. **Fă tastatura funcțională (taste reale):** desparte modelul `Tastatura.fbx` în 61 de taste, le pune literele QWERTY și ecranul cu sarcina de scris.
 6. **Integrează paharele (Ștefan) în SampleScene:** pune `Pahar` și `Pahar_Tinta` pe masă.
 7. **Creează fluxul Empatie:** panourile (tutorial, instrucțiuni, card, rezultate), logica `EmpatieFlow` și înălțimea capului.
-8. **Fă tabla funcțională:** markerul apucabil cu punct pe vârf + `TablaScris` pe tablă.
+8. **Fă tabla funcțională:** markerul apucabil (se prinde ca un pix), cu vârf colorat, + `TablaScris` pe tablă.
+9. **Integrează bucătăria cu decor (Anca) + lumina:** pune `Bucatarie_Decor` în locul graybox-ului, setează lumina caldă și rulează Generate Lighting.
 
 ## Cum lucrăm pe Git
 
@@ -118,6 +119,17 @@ Fiecare lucrează pe branch-ul lui (`feature/...`) și trimite munca printr-un *
 - **Nu comite niciodată `LiberationSans SDF - Fallback.asset`.** Unity îl modifică singur la fiecare Play (adaugă literele cu diacritice). Dă-i **Discard changes** în GitHub Desktop.
 
 Planul detaliat al săptămânii, cu tutorialul GitHub, e în documentul de plan al echipei.
+
+## Asset-uri preluate din alte surse
+
+| Ce | Sursă | Licență |
+|---|---|---|
+| Rig-ul XR (XR Origin), simulatorul, exemplele XRI | Unity VR Template + XR Interaction Toolkit Starter Assets | Unity Companion License |
+| Fontul LiberationSans (TextMesh Pro) | TextMesh Pro | OFL |
+| Decor bucătărie (frigider, microunde, chiuvetă, fructe...) | Kenney — Furniture Kit, Food Kit | CC0 |
+| Texturi parchet, tencuială, furnir | Poly Haven | CC0 |
+
+Restul (modelele graybox, scripturile, materialele, prefaburile, scena) au fost create în cadrul proiectului.
 
 ## Tehnologii
 

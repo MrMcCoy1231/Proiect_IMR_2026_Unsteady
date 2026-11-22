@@ -31,8 +31,12 @@ namespace Unsteady.Tabla
         [Header("Scris")]
         public Color culoare = new Color(0.12f, 0.20f, 0.55f);
         public float grosime = 0.005f;
-        [Tooltip("Cât de aproape de tablă (m) trebuie să fie vârful ca să scrie.")]
+        [Tooltip("Cât de aproape de tablă (m) trebuie să fie vârful ca să înceapă să scrie.")]
         public float distantaContact = 0.012f;
+        [Tooltip("Odată pornită, linia continuă până când vârful se depărtează la distanța asta (m). Așa nu se rupe la tremor.")]
+        public float distantaDesprindere = 0.03f;
+        [Tooltip("Cât timp (s) poate lipsi contactul fără să se rupă linia.")]
+        public float pauzaMaxima = 0.08f;
         public string[] cuvinte = { "MAMA", "CASA", "APA", "SOARE", "ANA" };
 
         [Header("Rânduri (ghidaj)")]
@@ -47,6 +51,7 @@ namespace Unsteady.Tabla
         readonly List<LineRenderer> linii = new List<LineRenderer>();
         LineRenderer liniaCurenta;
         Vector3 ultimulPunct;
+        float timpDesprins;
         Material matLinie;
         Transform containerLinii;
 
@@ -137,9 +142,20 @@ namespace Unsteady.Tabla
             float x = Vector3.Dot(rel, dreapta);
             float y = Vector3.Dot(rel, sus);
 
-            bool atinge = activ && d < distantaContact && d > -0.06f &&
+            // Histerezis: începi să scrii aproape de tablă, dar linia se oprește abia când te depărtezi mai mult.
+            float prag = liniaCurenta != null ? distantaDesprindere : distantaContact;
+            bool atinge = activ && d < prag && d > -0.06f &&
                           Mathf.Abs(x) < jumLatime - 0.01f && Mathf.Abs(y) < jumInaltime - 0.01f;
-            if (!atinge) { liniaCurenta = null; return; }
+            if (!atinge)
+            {
+                if (liniaCurenta != null)
+                {
+                    timpDesprins += Time.deltaTime;
+                    if (timpDesprins > pauzaMaxima) liniaCurenta = null;
+                }
+                return;
+            }
+            timpDesprins = 0f;
 
             Vector3 p = centruFata + dreapta * x + sus * y + normala * 0.006f;   // în fața foii albe
             if (liniaCurenta == null)
@@ -147,7 +163,7 @@ namespace Unsteady.Tabla
                 liniaCurenta = LinieNoua();
                 Adauga(p, y);
             }
-            else if ((p - ultimulPunct).sqrMagnitude > 0.003f * 0.003f)
+            else if ((p - ultimulPunct).sqrMagnitude > 0.002f * 0.002f)
             {
                 Adauga(p, y);
             }
@@ -156,9 +172,11 @@ namespace Unsteady.Tabla
         LineRenderer LinieNoua()
         {
             var go = new GameObject("Linie");
-            go.transform.SetParent(containerLinii, false);
+            go.transform.SetParent(containerLinii, true);
+            go.transform.rotation = Quaternion.LookRotation(-normala, sus);   // linia stă culcată pe tablă
             var lr = go.AddComponent<LineRenderer>();
             lr.useWorldSpace = true;
+            lr.alignment = LineAlignment.TransformZ;
             lr.material = matLinie;
             lr.startColor = lr.endColor = culoare;
             lr.widthMultiplier = grosime;
