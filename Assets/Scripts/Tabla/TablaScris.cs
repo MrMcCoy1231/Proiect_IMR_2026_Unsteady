@@ -80,6 +80,10 @@ namespace Unsteady.Tabla
         {
             CalculeazaGeometria();
             matLinie = new Material(Shader.Find("Sprites/Default"));
+            // Foaia albă (UI) și liniile sunt ambele transparente, iar Unity le sortează după distanța față de cameră:
+            // când îți mișcai capul, foaia ajungea desenată peste linii și scrisul „dispărea”.
+            // Cu o coadă de randare mai mare, liniile se desenează mereu după foaie (markerul și mâna tot le acoperă).
+            matLinie.renderQueue = 3100;
             containerLinii = new GameObject("Scris").transform;
             containerLinii.SetParent(transform, true);
             ConstruiesteUI();
