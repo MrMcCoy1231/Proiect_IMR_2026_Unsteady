@@ -29,14 +29,15 @@ Unsteady este o experiență pentru **Meta Quest 2** cu două moduri:
 | Vibrația controllerului, sincronizată cu tremorul | ✅ |
 | Panou de control în lume (nivel, profil, vibrație) | ✅ |
 | Meniu de start: Empatie / Testează-ți mâna | ✅ (al doilea mod arată deocamdată „în curând”) |
-| Pahar apucabil + turnatul apei (peste ~60°), pahar țintă care se umple | ✅ |
+| Paharele de sticlă: turnatul apei cu jet realist, inel care urcă cu apa și se face verde la nivelul țintă (60% ± 5%) | ✅ |
 | Tastatură funcțională: 61 de taste reale (QWERTY), apăsate cu degetul / controllerul | ✅ |
 | Sarcina de scris: cuvânt pe ecran, timp + greșeli + nivelul de tremor | ✅ |
 | Materiale simple: pereți alb cald, mobilă stejar | ✅ |
 | Modul Empatie complet: tutorial → alegi tremorul → stații (fără / cu tremor) → carduri „Știai că?” → rezultate | ✅ |
 | Scrisul pe tablă cu markerul (stația 3), cu linii de ghidaj și măsurarea ieșirilor din rând | ✅ |
 | Înălțimea capului: modul Floor pe cască, 1,20 m în simulator | ✅ |
-| Paharele legate de fluxul Empatie (stația 1) | 🔧 în lucru (Ștefan) |
+| Stația de turnat legată de fluxul Empatie (stația 1): timp + ml vărsați | ✅ |
+| Obiectele din bucătărie apucabile, cu fizică (măr, banană, castron, farfurie, burger, ghiveci, cană, coș) | ✅ |
 | Bucătăria cu texturi, decor și lumini calde (baked) | ✅ |
 | Testează-ți mâna (scenariul de detecție) | ⏳ după prezentare |
 
@@ -59,6 +60,7 @@ Unsteady este o experiență pentru **Meta Quest 2** cu două moduri:
 | F6 | Pornește / oprește vibrația |
 | **Y** (controller stâng, și în cască) | Nivelul următor: Oprit → Ușor → Moderat → Sever (oprit în timpul modului Empatie) |
 | **F8** | Modul Empatie: pornește / apasă butonul principal al panoului (Start, Continuă, Sari peste...) |
+| **F9** | La stația de turnat: toarnă automat până se face inelul verde |
 | **F7** | Pe tablă: scrie automat o linie de test și apasă Gata |
 | **T** (simulator) | Trigger-ul controllerului: apeși butoanele cu raza |
 
@@ -83,9 +85,9 @@ Assets/
   Prefabs/Tastatura/     tastatura cu taste reale + ecran (Tastatura_Taste.asset = mesh-urile tastelor)
   Prefabs/Bucatarie/     bucătăria cu materialele aplicate
   Materiale/             Perete_AlbCald, Mobila_Stejar, Tasta
-  Prefabs/Pahar/         paharul din care torni
-  Prefabs/Pahar_tinta/   paharul care se umple
-  Scripts/Pahar/         TurnareApa, PaharTinta
+  Prefabs/Pahar/         paharul (același prefab pentru cel plin și cel gol)
+  Scripts/Pahar/         Pahar (apa + jetul), StatieTurnare (stația 1); InelSemn e în Scripts/
+  Scripts/Bucatarie/     meniul care face obiectele din bucătărie apucabile
 docs/                    propunerea și structura proiectului (PDF)
 ```
 
@@ -108,6 +110,9 @@ Uneltele de editor care construiesc automat componentele în scena deschisă:
 7. **Creează fluxul Empatie:** panourile (tutorial, instrucțiuni, card, rezultate), logica `EmpatieFlow` și înălțimea capului.
 8. **Fă tabla funcțională:** markerul apucabil (se prinde ca un pix), cu vârf colorat, + `TablaScris` pe tablă.
 9. **Integrează bucătăria cu decor (Anca) + lumina:** pune `Bucatarie_Decor` în locul graybox-ului, setează lumina caldă și rulează Generate Lighting.
+10. **Integrează stația de turnat (Ștefan):** prefab-ul `Pahar` primește scriptul nou, paharul țintă devine tot un `Pahar`, apoi pune inelul (`SemnNivel`) și `Statie_Turnare` în scenă.
+11. **Paharele din sticlă:** materialele `Sticla_Pahar`, `Apa_Pahar`, `Stropi_Apa` și normale netede pe modelul paharului.
+12. **Obiectele din bucătărie apucabile:** collidere după formă, Rigidbody și XR Grab pe obiectele mici din `Bucatarie_Decor`; scoate bifa Static de pe ele.
 
 ## Cum lucrăm pe Git
 

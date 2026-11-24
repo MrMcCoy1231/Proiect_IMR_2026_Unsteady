@@ -7,7 +7,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace Unsteady.EditorTools
 {
-    /// Obiectele mici din decorul bucătăriei (Kenney: măr, banană, castron, farfurie, burger, ghiveci)
+    /// Obiectele mici din decorul bucătăriei (Kenney: măr, banană, castron, farfurie, burger, ghiveci, cană, coș de gunoi)
     /// devin apucabile: collider potrivit formei, Rigidbody și XR Grab Interactable.
     /// Lucrează direct pe prefab-ul Bucatarie_Decor (al Ancăi), deci se vede în orice scenă care îl folosește.
     public static class ObiecteApucabile
@@ -30,9 +30,11 @@ namespace Unsteady.EditorTools
             new Obiect("plate", Forma.Farfurie, 0.35f),
             new Obiect("burger-cheese-double", Forma.Cutie, 0.25f),
             new Obiect("plantSmall1", Forma.Cutie, 0.8f),
+            new Obiect("mug", Forma.Convex, 0.3f),
+            new Obiect("trashcan", Forma.Cutie, 1.5f),
         };
 
-        [MenuItem("Unsteady/12. Obiectele de pe blat apucabile (fizică + coliziuni)")]
+        [MenuItem("Unsteady/12. Obiectele din bucătărie apucabile (fizică + coliziuni)")]
         static void Aplica()
         {
             if (EditorApplication.isPlaying)
