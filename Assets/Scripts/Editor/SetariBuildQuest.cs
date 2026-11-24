@@ -12,8 +12,10 @@ namespace Unsteady.EditorTools
         {
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel32;
             PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)34;
+            // MeshCollider-ele fixe (pereți, electrocasnice) se gătesc la build, nu la încărcarea scenei pe cască
+            PlayerSettings.bakeCollisionMeshes = true;
             AssetDatabase.SaveAssets();
-            string msg = $"Android: minim API {(int)PlayerSettings.Android.minSdkVersion}, țintă API {(int)PlayerSettings.Android.targetSdkVersion}.";
+            string msg = $"Android: minim API {(int)PlayerSettings.Android.minSdkVersion}, țintă API {(int)PlayerSettings.Android.targetSdkVersion}; collidere pre-gătite: {PlayerSettings.bakeCollisionMeshes}.";
             Debug.Log("[Unsteady] " + msg);
             EditorUtility.DisplayDialog("Unsteady", msg, "OK");
         }

@@ -34,6 +34,12 @@ namespace Unsteady.EditorTools
             new Obiect("trashcan", Forma.Cutie, 1.5f),
         };
 
+        // electrocasnicele rămân pe loc, dar au nevoie de collider ca lucrurile să stea pe ele (cana în espressor, mărul pe microunde)
+        static readonly string[] Fixe =
+        {
+            "kitchenCoffeeMachine", "kitchenFridge", "kitchenMicrowave", "kitchenSink", "kitchenStove", "lampSquareTable",
+        };
+
         [MenuItem("Unsteady/12. Obiectele din bucătărie apucabile (fizică + coliziuni)")]
         static void Aplica()
         {
@@ -53,6 +59,7 @@ namespace Unsteady.EditorTools
             int scoase = CurataScena();
 
             var gasite = new List<string>();
+            var fixe = new List<string>();
             var lipsa = new List<string>();
             var root = PrefabUtility.LoadPrefabContents(DecorPrefab);
             try
@@ -64,6 +71,11 @@ namespace Unsteady.EditorTools
                     Configureaza(t.gameObject, o);
                     gasite.Add(o.nume);
                 }
+                foreach (var nume in Fixe)
+                {
+                    var t = root.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == nume);
+                    if (t != null && ColidereFixe(t.gameObject)) fixe.Add(nume);
+                }
                 PrefabUtility.SaveAsPrefabAsset(root, DecorPrefab);
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }
@@ -73,6 +85,7 @@ namespace Unsteady.EditorTools
             EditorSceneManager.SaveScene(scena);
 
             string msg = "Apucabile acum: " + string.Join(", ", gasite) + ".";
+            if (fixe.Count > 0) msg += "\nCu collider fix (stau pe loc, dar lucrurile se sprijină de ele): " + string.Join(", ", fixe) + ".";
             if (scoase > 0) msg += $"\nAm scos {scoase} componente puse de mână în scenă (acum vin din prefab).";
             if (lipsa.Count > 0) msg += "\nNu le-am găsit: " + string.Join(", ", lipsa) + ".";
             msg += "\nApasă Play: le poți apuca cu grip (G în simulator), cad și se lovesc între ele.";
@@ -98,6 +111,18 @@ namespace Unsteady.EditorTools
                         .OrderBy(c => c is XRBaseInteractable ? 0 : c is Collider ? 1 : 2).ToList();
                     foreach (var c in comps) { Undo.DestroyObjectImmediate(c); n++; }
                     PrefabUtility.RevertObjectOverride(go, InteractionMode.AutomatedAction);   // ex. bifa Static
+                }
+            }
+            // pe electrocasnice scoatem colliderele puse de mână (o cutie peste tot espressorul împinge cana afară)
+            foreach (var nume in Fixe)
+            {
+                foreach (var t in toate.Where(x => x != null && x.name == nume))
+                {
+                    if (!PrefabUtility.IsPartOfPrefabInstance(t.gameObject)) continue;
+                    foreach (var c in t.GetComponentsInChildren<Collider>(true)
+                                 .Where(c => c != null && PrefabUtility.IsAddedComponentOverride(c)
+                                             && c.GetComponentInParent<Rigidbody>() == null).ToList())
+                    { Undo.DestroyObjectImmediate(c); n++; }
                 }
             }
             return n;
@@ -191,6 +216,32 @@ namespace Unsteady.EditorTools
             // obiectele de decor erau statice (lumina baked); acum se mișcă, deci nu mai pot fi statice
             foreach (var t in go.GetComponentsInChildren<Transform>(true))
                 GameObjectUtility.SetStaticEditorFlags(t.gameObject, 0);
+        }
+
+        // MeshCollider exact (ne-convex, merge fiindcă obiectul nu se mișcă) pe fiecare mesh care n-are deja collider;
+        // sare peste obiectele apucabile din interior (ex. cana din espressor), care au collider-ul lor
+        static bool ColidereFixe(GameObject go)
+        {
+            bool adaugat = false;
+            foreach (var mf in go.GetComponentsInChildren<MeshFilter>(true))
+            {
+                if (mf.sharedMesh == null) continue;
+                if (mf.GetComponentInParent<Rigidbody>() != null) continue;
+                if (Lista.Any(o => EsteInSubarbore(mf.transform, o.nume, go.transform))) continue;
+                if (mf.GetComponent<Collider>() != null) continue;
+                var mc = mf.gameObject.AddComponent<MeshCollider>();
+                mc.sharedMesh = mf.sharedMesh;
+                mc.convex = false;
+                adaugat = true;
+            }
+            return adaugat;
+        }
+
+        static bool EsteInSubarbore(Transform t, string nume, Transform oprire)
+        {
+            for (var x = t; x != null && x != oprire.parent; x = x.parent)
+                if (x.name == nume) return true;
+            return false;
         }
 
         static GameObject CopilColider(GameObject parinte, string nume, Vector3 pozLume, Quaternion rotLume)
