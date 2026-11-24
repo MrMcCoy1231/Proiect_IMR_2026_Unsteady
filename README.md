@@ -113,6 +113,7 @@ Uneltele de editor care construiesc automat componentele în scena deschisă:
 10. **Integrează stația de turnat (Ștefan):** prefab-ul `Pahar` primește scriptul nou, paharul țintă devine tot un `Pahar`, apoi pune inelul (`SemnNivel`) și `Statie_Turnare` în scenă.
 11. **Paharele din sticlă:** materialele `Sticla_Pahar`, `Apa_Pahar`, `Stropi_Apa` și normale netede pe modelul paharului.
 12. **Obiectele din bucătărie apucabile:** collidere după formă, Rigidbody și XR Grab pe obiectele mici din `Bucatarie_Decor`; scoate bifa Static de pe ele.
+13. **Tavan invizibil:** un collider fără mesh deasupra pereților, ca obiectele aruncate în sus să cadă înapoi în cameră.
 
 ## Cum lucrăm pe Git
 
