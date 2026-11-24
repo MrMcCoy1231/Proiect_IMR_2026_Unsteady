@@ -277,10 +277,6 @@ PrefabInstance:
       propertyPath: m_CollisionDetection
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 3523930868806133055, guid: 4c30ee42bc284bf4b91043d7351265f3, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: e0707167b9321d64eb4ed24177958638, type: 2}
     - target: {fileID: 6332907020545300726, guid: 4c30ee42bc284bf4b91043d7351265f3, type: 3}
       propertyPath: m_Name
       value: Pahar (1)
@@ -380,6 +376,7 @@ MonoBehaviour:
   gura: {fileID: 121926399}
   particule: {fileID: 461459398}
   razaGura: 0.08
+  razaGuraAutomata: 1
   capacitateMl: 250
   semiInaltimeMesh: 1
   unghiPornirePlin: 50
@@ -387,6 +384,12 @@ MonoBehaviour:
   rampaUnghi: 25
   debitMaxim: 0.4
   toleranta: 1.3
+  materialJet: {fileID: 0}
+  culoareJet: {r: 0.78, g: 0.9, b: 1, a: 0.8}
+  grosimeMin: 0.004
+  grosimeMax: 0.011
+  vitezaMin: 0.15
+  vitezaMax: 0.45
   nivelInitial: 0
 --- !u!1 &610590590
 GameObject:
@@ -526,7 +529,8 @@ MonoBehaviour:
   paharGol: {fileID: 461459400}
   semn: {fileID: 1750581991}
   nivelSemn: 0.6
-  inelLipitDePahar: 0
+  margineEroare: 0.05
+  secundeStabil: 0.8
   secundeLasat: 1.5
   testFaraFlux: 0
 --- !u!1 &905568185
@@ -1501,9 +1505,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   pahar: {fileID: 0}
+  statie: {fileID: 0}
+  materialInel: {fileID: 0}
   raza: 0.045
+  razaAutomata: 1
   grosime: 0.003
   segmente: 40
+  culoareNormala: {r: 1, g: 1, b: 1, a: 0.85}
+  culoareTinta: {r: 0.2, g: 0.9, b: 0.35, a: 1}
+  vitezaCuloare: 12
   ascundeCandEGol: 0
 --- !u!120 &1750581993
 LineRenderer:
@@ -2964,10 +2974,6 @@ PrefabInstance:
       propertyPath: m_CollisionDetection
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 3523930868806133055, guid: 4c30ee42bc284bf4b91043d7351265f3, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: e0707167b9321d64eb4ed24177958638, type: 2}
     - target: {fileID: 6332907020545300726, guid: 4c30ee42bc284bf4b91043d7351265f3, type: 3}
       propertyPath: m_Name
       value: Pahar
@@ -3064,6 +3070,7 @@ MonoBehaviour:
   gura: {fileID: 251726369}
   particule: {fileID: 6925334707079444980}
   razaGura: 0.08
+  razaGuraAutomata: 1
   capacitateMl: 250
   semiInaltimeMesh: 1
   unghiPornirePlin: 50
@@ -3071,6 +3078,12 @@ MonoBehaviour:
   rampaUnghi: 25
   debitMaxim: 0.4
   toleranta: 1.3
+  materialJet: {fileID: 0}
+  culoareJet: {r: 0.78, g: 0.9, b: 1, a: 0.8}
+  grosimeMin: 0.004
+  grosimeMax: 0.011
+  vitezaMin: 0.15
+  vitezaMax: 0.45
   nivelInitial: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

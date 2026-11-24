@@ -239,7 +239,7 @@ namespace Unsteady.Flux
             var nume = new List<string>();
             var fara = new List<string>();
             var cu = new List<string>();
-            float tFara = 0, tCu = 0; int gFara = 0, gCu = 0; bool comparabil = true;
+            float tFara = 0, tCu = 0; int gFara = 0, gCu = 0, mlFara = 0, mlCu = 0; bool comparabil = true;
 
             for (int i = 0; i < statii.Count; i++)
             {
@@ -248,7 +248,9 @@ namespace Unsteady.Flux
                 cu.Add(Format(rezultate[i, 1]));
                 if (rezultate[i, 0].sarit || rezultate[i, 1].sarit) { comparabil = false; continue; }
                 tFara += rezultate[i, 0].timpSecunde; tCu += rezultate[i, 1].timpSecunde;
-                gFara += rezultate[i, 0].greseli; gCu += rezultate[i, 1].greseli;
+                // apa vărsată (ml) nu se adună cu greșelile de tastat / ieșirile din rând
+                if (EsteInMl(rezultate[i, 0])) { mlFara += rezultate[i, 0].greseli; mlCu += rezultate[i, 1].greseli; }
+                else { gFara += rezultate[i, 0].greseli; gCu += rezultate[i, 1].greseli; }
             }
 
             string rezumat;
@@ -261,9 +263,11 @@ namespace Unsteady.Flux
                 string timp = raport >= 1.05f ? $"ți-a luat de <b>{raport:0.0} ori</b> mai mult"
                             : raport <= 0.95f ? "ai fost chiar mai rapid"
                             : "ți-a luat cam la fel de mult";
-                string gr = extra > 0 ? $" și ai făcut <b>{extra}</b> {(extra == 1 ? "greșeală" : "greșeli")} în plus."
-                          : extra < 0 ? ", cu mai puține greșeli." : ", cu tot atâtea greșeli.";
-                rezumat = $"Cu tremor <b>{nivel}</b> {timp}{gr}";
+                int mlExtra = mlCu - mlFara;
+                string gr = extra > 0 ? $"ai făcut <b>{extra}</b> {(extra == 1 ? "greșeală" : "greșeli")} în plus"
+                          : extra < 0 ? "ai făcut mai puține greșeli" : "ai făcut tot atâtea greșeli";
+                string apa = mlExtra > 0 ? $" și ai vărsat <b>{mlExtra} ml</b> de apă în plus" : "";
+                rezumat = $"Cu tremor <b>{nivel}</b> {timp}, {gr}{apa}.";
                 if (!comparabil) rezumat += " <size=80%>(fără stațiile sărite)</size>";
             }
             else rezumat = "Ai sărit peste stații, așa că nu putem compara.";
@@ -273,6 +277,9 @@ namespace Unsteady.Flux
                 altNivel: ArataSetari,
                 meniu: Termina);
         }
+
+        static bool EsteInMl(RezultatStatie r) =>
+            !string.IsNullOrEmpty(r.etichetaGreseli) && r.etichetaGreseli.StartsWith("ml");
 
         static string Format(RezultatStatie r)
         {
